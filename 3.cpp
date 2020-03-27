@@ -18,42 +18,44 @@ using namespace std;
 //       i = (p-1)/2 - 1
 //       p = 2*(i+1) + 1
 
-int numbits(long int n)
-{
-    int bits = 0;
-    for (bits = 0; n != 0; ++bits) n >>= 1;
-    return bits;
-}
 
 vector<int> get_primes(long int & n)
 {
-    vector<int> result;
-    if (n < 2) return result;
-    result.push_back(2);
-    if (n == 2) return result;
+    vector<int> primes;
+    if (n < 2) return primes;
+    primes.push_back(2);
+    if (n == 2) return primes;
 
-    int stop = sqrt(n);
-    stop = (stop % 2) ? stop/2 - 1 : stop/2;
+    int istop = sqrt(n);
+    istop = (istop % 2) ? istop/2 - 1 : istop/2;
 
     bitset<1000000> sieve; 
     sieve.set();
    
-    unsigned long long int j;
-    int k;
-    for (int i = 0; i <= stop; ++i)
+    int i, j, p;
+    int jstop = (sqrt(2*(istop+1)+1)-3) / 2;
+    for (i = 0; i <= jstop; ++i)
     {   if (!(sieve.test(i))) continue;
 
-        j = 4*i*i + 6*i + 9;
-        k = 2*i + 3;
-        result.push_back(k);
+        p = 2*i + 3;
+        primes.push_back(p);
 
-        while (j <= stop)
+        j = 2*i*i + 3*i + 3;
+        if (j > istop) {cout << "***WARNING: jstop fail. prime: " << p << endl;}
+        for (j; j <= istop; j += p)
         {   sieve.reset(j);
-            j += k;
+            j += p;
         }
     }
 
-    return result;
+    for (i; i <= istop; ++i)
+    {   if (sieve.test(i))
+        {   p = 2*i + 3;
+            primes.push_back(p);
+        }
+    }
+
+    return primes;
 }
 
 int largest_factor(vector<int> & primes, long int & n)
